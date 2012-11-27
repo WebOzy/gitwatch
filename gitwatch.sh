@@ -32,7 +32,7 @@ fi
 # If you don't want to add text before and/or after the date/time, simply
 #  set them to empty strings
 
-CCPREPEND="Hi there. I found changes on "
+CCPREPEND="I found changes on "
 CCAPPEND=" and committed them via gitwatch.sh"
 
 IN=$(readlink -f "$1")
@@ -54,9 +54,9 @@ fi
 while true; do
     $INCOMMAND # wait for changes
     sleep 2 # wait 2 more seconds to give apps time to write out all changes
-    DATE=`date "+%Y-%m-%d %H:%M:%S"` # construct date-time string
+    DATE=`date +"%d %b %Y at %r"` # construct date-time string
     cd $TARGETDIR # CD into right dir
     git add $GITADD # add file(s) to index
-    git commit$GITINCOMMAND -m"${CCPREPEND}(${DATE})${CCAPPEND}" # construct commit message and commit
+    git commit$GITINCOMMAND -m"${CCPREPEND}${DATE}${CCAPPEND}" # construct commit message and commit
     git push # push the changes to github
 done

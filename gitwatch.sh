@@ -2,7 +2,7 @@
 #
 # gitwatch - watch file or directory and git commit all changes as they happen
 #
-# Copyright (C) 2012  Patrick Lehner
+# Original work by Patrick Lehner with modifications by Nicholas Garofalo
 #
 #############################################################################
 #    This program is free software: you can redistribute it and/or modify
@@ -19,23 +19,21 @@
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #############################################################################
 #
-#   Idea and original code taken from http://stackoverflow.com/a/965274 
-#       (but heavily modified by now)
-#
-#   Requires the command 'inotifywait' to be available, which is part of
-#   the inotify-tools (See https://github.com/rvoicilas/inotify-tools )
+# Requires the command 'inotifywait' to be available, which is part of
+# the inotify-tools (See https://github.com/rvoicilas/inotify-tools )
 #
 
 if [ -z $1 ]; then
     exit
 fi
 
-#These two strings are used to construct the commit comment
+# These two strings are used to construct the commit comment
 #  They're glued together like "<CCPREPEND>(<DATE&TIME>)<CCAPPEND>"
-#If you don't want to add text before and/or after the date/time, simply
+# If you don't want to add text before and/or after the date/time, simply
 #  set them to empty strings
-CCPREPEND="Scripted auto-commit on change "
-CCAPPEND=" by gitwatch.sh"
+
+CCPREPEND="Hi there. I found changes on "
+CCAPPEND=" and committed them via gitwatch.sh"
 
 IN=$(readlink -f "$1")
 
@@ -54,10 +52,11 @@ else
 fi
 
 while true; do
-    $INCOMMAND #wait for changes
-    sleep 2 #wait 2 more seconds to give apps time to write out all changes
-    DATE=`date "+%Y-%m-%d %H:%M:%S"` #construct date-time string
-    cd $TARGETDIR #CD into right dir
-    git add $GITADD #add file(s) to index
+    $INCOMMAND # wait for changes
+    sleep 2 # wait 2 more seconds to give apps time to write out all changes
+    DATE=`date "+%Y-%m-%d %H:%M:%S"` # construct date-time string
+    cd $TARGETDIR # CD into right dir
+    git add $GITADD # add file(s) to index
     git commit$GITINCOMMAND -m"${CCPREPEND}(${DATE})${CCAPPEND}" # construct commit message and commit
+    git push # push the changes to github
 done

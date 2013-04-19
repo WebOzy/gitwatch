@@ -51,6 +51,8 @@ else
     exit
 fi
 
+# This takes care of committing and pushing
+
 while true; do
     $INCOMMAND # wait for changes
     sleep 2 # wait 2 more seconds to give apps time to write out all changes
